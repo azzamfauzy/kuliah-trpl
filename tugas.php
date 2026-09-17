@@ -7,7 +7,7 @@ if (isset($_POST['submit'])) {
     $jenis      = $_POST['jenis'];
     $deskripsi  = $_POST['deskripsi'];
     $deadline   = $_POST['deadline'];
-    $status     = "Belum Selesai"; // Setelan awal saat tugas baru dibuat
+    $status     = "Belum Selesai";
 
     $simpan = mysqli_query($koneksi, "INSERT INTO tabel_tugas_ujian (id_matkul, jenis, deskripsi, deadline, status) VALUES ('$id_matkul', '$jenis', '$deskripsi', '$deadline', '$status')");
 
@@ -18,18 +18,29 @@ if (isset($_POST['submit'])) {
     }
 }
 
-// 2. PROSES UPDATE STATUS TUGAS (SELESAI / BELUM)
+// 2. PROSES UPDATE STATUS TUGAS
 if (isset($_GET['action']) && $_GET['action'] == 'update_status') {
     $id_agenda  = $_GET['id'];
     $status_sekarang = $_GET['status'];
     
-    // Tukar status
     $status_baru = ($status_sekarang == 'Belum Selesai') ? 'Sudah Selesai' : 'Belum Selesai';
-    
     $update = mysqli_query($koneksi, "UPDATE tabel_tugas_ujian SET status='$status_baru' WHERE id_agenda='$id_agenda'");
     
     if ($update) {
         header("Location: tugas.php");
+    }
+}
+
+// 3. PROSES HAPUS AGENDA TUGAS
+if (isset($_GET['action']) && $_GET['action'] == 'hapus') {
+    $id_agenda = $_GET['id'];
+
+    $hapus = mysqli_query($koneksi, "DELETE FROM tabel_tugas_ujian WHERE id_agenda = '$id_agenda'");
+
+    if ($hapus) {
+        header("Location: tugas.php");
+    } else {
+        echo "<script>alert('Gagal menghapus agenda!');</script>";
     }
 }
 ?>
@@ -109,11 +120,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'update_status') {
         </tr>
         <?php
         $no = 1;
-        // Ambil data gabungan tabel tugas dan matkul, diurutkan dari deadline paling dekat
         $ambil_tugas = mysqli_query($koneksi, "SELECT tabel_tugas_ujian.*, table_matkul.nama_matkul FROM tabel_tugas_ujian JOIN table_matkul ON tabel_tugas_ujian.id_matkul = table_matkul.id_matkul ORDER BY tabel_tugas_ujian.deadline ASC");
         
         while ($tampil = mysqli_fetch_assoc($ambil_tugas)) {
-            // Logika pewarnaan status biar menarik
             $warna_status = ($tampil['status'] == 'Sudah Selesai') ? 'green' : 'red';
             $teks_tombol  = ($tampil['status'] == 'Sudah Selesai') ? 'Mark as Undone 🔴' : 'Mark as Done 🟢';
         ?>
@@ -125,10 +134,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'update_status') {
             <td><span style="color: #c0392b; font-weight: bold;"><?php echo date('d-m-Y H:i', strtotime($tampil['deadline'])); ?> WIB</span></td>
             <td><strong style="color: <?php echo $warna_status; ?>;"><?php echo $tampil['status']; ?></strong></td>
             <td>
-                <!-- Link tombol aksi yang memicu fungsi Update Status di bagian PHP atas -->
                 <a href="tugas.php?action=update_status&id=<?php echo $tampil['id_agenda']; ?>&status=<?php echo $tampil['status']; ?>" style="text-decoration: none; padding: 5px 10px; background-color: #ecf0f1; border-radius: 4px; font-size: 12px; color: #333; font-weight: bold; border: 1px solid #bdc3c7;">
                     <?php echo $teks_tombol; ?>
-                </a>
+                </a> | 
+                <a href="tugas.php?action=hapus&id=<?php echo $tampil['id_agenda']; ?>" onclick="return confirm('Hapus agenda ini?')" style="color: #c0392b; font-weight: bold; text-decoration: none; font-size: 14px;">Hapus 🗑️</a>
             </td>
         </tr>
         <?php } ?>

@@ -1,20 +1,32 @@
 <?php
 include 'koneksi.php';
 
-// Proses saat tombol "Simpan" di-klik
+// 1. PROSES SAAT TOMBOL "SIMPAN" DI-KLIK
 if (isset($_POST['submit'])) {
     $nama_matkul = $_POST['nama_matkul'];
     $semester    = $_POST['semester'];
     $dosen       = $_POST['dosen'];
 
-    // Perintah SQL untuk memasukkan data ke tabel (pastikan memakai table_matkul dengan huruf 'e')
     $simpan = mysqli_query($koneksi, "INSERT INTO table_matkul (nama_matkul, semester, dosen) VALUES ('$nama_matkul', '$semester', '$dosen')");
 
     if ($simpan) {
-        // Refresh halaman otomatis jika berhasil simpan
         header("Location: index.php");
     } else {
         echo "<script>alert('Gagal menambah data!');</script>";
+    }
+}
+
+// 2. PROSES SAAT TOMBOL "HAPUS" DI-KLIK
+if (isset($_GET['action']) && $_GET['action'] == 'hapus') {
+    $id_matkul = $_GET['id'];
+
+    // Perintah SQL untuk menghapus data berdasarkan ID
+    $hapus = mysqli_query($koneksi, "DELETE FROM table_matkul WHERE id_matkul = '$id_matkul'");
+
+    if ($hapus) {
+        header("Location: index.php");
+    } else {
+        echo "<script>alert('Gagal menghapus data!');</script>";
     }
 }
 ?>
@@ -26,18 +38,17 @@ if (isset($_POST['submit'])) {
 </head>
 <body>
     <h1>Dashboard Kuliah TRPL PNM Madiun</h1>
-
-            <p style="text-align: center;">
-        <a href="index.php" style="margin-right: 15px; font-weight: bold; color: #2c3e50;">📚 Data Matkul</a> | 
+    
+    <!-- MENU NAVIGASI UTAMA -->
+    <p style="text-align: center;">
+        <a href="index.php" style="margin-right: 15px; font-weight: bold; color: #3498db;">📚 Data Matkul</a> | 
         <a href="materi.php" style="margin-right: 15px; margin-left: 15px; font-weight: bold; color: #2c3e50;">📝 Catatan Materi</a> |
-        <a href="tugas.php" style="margin-left: 15px; font-weight: bold; color: #3498db;">📅 Agenda Tugas & Ujian</a>
+        <a href="tugas.php" style="margin-left: 15px; font-weight: bold; color: #2c3e50;">📅 Agenda Tugas & Ujian</a>
     </p>
-
-
-
+    
     <!-- FORM INPUT DATA -->
-    <h3>Tambah Mata Kuliah Baru:</h3>
     <form action="" method="POST">
+        <h3>Tambah Mata Kuliah Baru:</h3>
         <table border="0" cellpadding="5">
             <tr>
                 <td>Nama Mata Kuliah</td>
@@ -61,13 +72,14 @@ if (isset($_POST['submit'])) {
     <hr>
 
     <!-- TABEL TAMPIL DATA -->
-    <h3>Daftar Mata Kuliah:</h3>
+    <h3 style="text-align: center;">Daftar Mata Kuliah:</h3>
     <table border="1" cellpadding="10" cellspacing="0">
         <tr>
             <th>No</th>
             <th>Nama Mata Kuliah</th>
             <th>Semester</th>
             <th>Dosen Pengampu</th>
+            <th>Aksi</th>
         </tr>
         <?php
         $no = 1;
@@ -79,6 +91,10 @@ if (isset($_POST['submit'])) {
             <td><?php echo $tampil['nama_matkul']; ?></td>
             <td><?php echo $tampil['semester']; ?></td>
             <td><?php echo $tampil['dosen']; ?></td>
+            <td>
+                <!-- Tombol Hapus dengan konfirmasi Javascript agar tidak tidak sengaja tertekan -->
+                <a href="index.php?action=hapus&id=<?php echo $tampil['id_matkul']; ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus mata kuliah ini?')" style="color: #c0392b; font-weight: bold; text-decoration: none;">Hapus 🗑️</a>
+            </td>
         </tr>
         <?php } ?>
     </table>
