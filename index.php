@@ -25,7 +25,8 @@ if (isset($_POST['submit'])) {
 </head>
 <body>
     <h1>Dashboard Kuliah TRPL PNM Madiun</h1>
-    
+    <a href="materi.php">📖 Lihat & Isi Catatan Kuliah Harian</a>
+
     <!-- FORM INPUT DATA -->
     <h3>Tambah Mata Kuliah Baru:</h3>
     <form action="" method="POST">
