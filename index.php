@@ -26,11 +26,13 @@ if (isset($_POST['submit'])) {
 </head>
 <body>
     <h1>Dashboard Kuliah TRPL PNM Madiun</h1>
-    
-        <p style="text-align: center;">
+
+            <p style="text-align: center;">
         <a href="index.php" style="margin-right: 15px; font-weight: bold; color: #2c3e50;">📚 Data Matkul</a> | 
-        <a href="materi.php" style="margin-left: 15px; font-weight: bold; color: #3498db;">📝 Catatan Materi Harian</a>
+        <a href="materi.php" style="margin-right: 15px; margin-left: 15px; font-weight: bold; color: #2c3e50;">📝 Catatan Materi</a> |
+        <a href="tugas.php" style="margin-left: 15px; font-weight: bold; color: #3498db;">📅 Agenda Tugas & Ujian</a>
     </p>
+
 
 
     <!-- FORM INPUT DATA -->

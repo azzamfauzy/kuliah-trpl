@@ -27,7 +27,12 @@ if (isset($_POST['submit'])) {
 </head>
 <body>
     <h1>Catatan Materi Kuliah Harian</h1>
-    <p style="text-align: center;"><a href="index.php">⬅️ Kembali ke Dashboard Matkul</a></p>
+
+        <p style="text-align: center;">
+        <a href="index.php" style="margin-right: 15px; font-weight: bold; color: #2c3e50;">📚 Data Matkul</a> | 
+        <a href="materi.php" style="margin-right: 15px; margin-left: 15px; font-weight: bold; color: #2c3e50;">📝 Catatan Materi</a> |
+        <a href="tugas.php" style="margin-left: 15px; font-weight: bold; color: #3498db;">📅 Agenda Tugas & Ujian</a>
+    </p>
     
     <!-- FORM INPUT CATATAN MATERI -->
     <form action="" method="POST">
