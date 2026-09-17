@@ -22,10 +22,16 @@ if (isset($_POST['submit'])) {
 <html>
 <head>
     <title>Study Tracker - Maba TRPL</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
     <h1>Dashboard Kuliah TRPL PNM Madiun</h1>
-    <a href="materi.php">📖 Lihat & Isi Catatan Kuliah Harian</a>
+    
+        <p style="text-align: center;">
+        <a href="index.php" style="margin-right: 15px; font-weight: bold; color: #2c3e50;">📚 Data Matkul</a> | 
+        <a href="materi.php" style="margin-left: 15px; font-weight: bold; color: #3498db;">📝 Catatan Materi Harian</a>
+    </p>
+
 
     <!-- FORM INPUT DATA -->
     <h3>Tambah Mata Kuliah Baru:</h3>

@@ -1,51 +1,47 @@
 <?php
 include 'koneksi.php';
 
-// Proses menyimpan catatan materi baru
-if (isset($_POST['simpan_materi'])) {
+// Proses saat tombol "Simpan Catatan" di-klik
+if (isset($_POST['submit'])) {
     $id_matkul       = $_POST['id_matkul'];
     $pertemuan_ke    = $_POST['pertemuan_ke'];
     $judul_materi    = $_POST['judul_materi'];
     $catatan         = $_POST['catatan'];
     $tanggal_kuliah  = $_POST['tanggal_kuliah'];
 
-    // Memasukkan data ke tabel_materi
-    $query = "INSERT INTO tabel_materi (id_matkul, pertemuan_ke, judul_materi, catatan, tanggal_kuliah) 
-              VALUES ('$id_matkul', '$pertemuan_ke', '$judul_materi', '$catatan', '$tanggal_kuliah')";
-    
-    $simpan = mysqli_query($koneksi, $query);
+    // Memasukkan data ke tabel materi
+    $simpan = mysqli_query($koneksi, "INSERT INTO tabel_materi (id_matkul, pertemuan_ke, judul_materi, catatan, tanggal_kuliah) VALUES ('$id_matkul', '$pertemuan_ke', '$judul_materi', '$catatan', '$tanggal_kuliah')");
 
     if ($simpan) {
         header("Location: materi.php");
     } else {
-        echo "<script>alert('Gagal menyimpan materi!');</script>";
+        echo "<script>alert('Gagal menambah catatan!');</script>";
     }
 }
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Catatan Materi Kuliah - TRPL</title>
+    <title>Catatan Materi - Study Tracker</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
     <h1>Catatan Materi Kuliah Harian</h1>
-    <a href="index.php">⬅️ Kembali ke Daftar Matkul</a>
-    <hr>
-
+    <p style="text-align: center;"><a href="index.php">⬅️ Kembali ke Dashboard Matkul</a></p>
+    
     <!-- FORM INPUT CATATAN MATERI -->
-    <h3>Tambah Catatan Kuliah Baru:</h3>
     <form action="" method="POST">
+        <h3>Tambah Catatan Baru:</h3>
         <table border="0" cellpadding="5">
             <tr>
                 <td>Mata Kuliah</td>
                 <td>: 
-                    <select name="id_matkul" required>
+                    <select name="id_matkul" style="width: 100%; padding: 8px; border-radius: 4px;" required>
                         <option value="">-- Pilih Mata Kuliah --</option>
                         <?php
-                        // Mengambil daftar matkul dari tabel induk agar sinkron
                         $matkul = mysqli_query($koneksi, "SELECT * FROM table_matkul");
                         while($m = mysqli_fetch_assoc($matkul)) {
-                            echo "<option value='".$m['id_matkul']."'>".$m['nama_matkul']." (Sem ".$m['semester'].")</option>";
+                            echo "<option value='".$m['id_matkul']."'>".$m['nama_matkul']."</option>";
                         }
                         ?>
                     </select>
@@ -57,11 +53,11 @@ if (isset($_POST['simpan_materi'])) {
             </tr>
             <tr>
                 <td>Judul Materi</td>
-                <td>: <input type="text" name="judul_materi" required style="width: 300px;"></td>
+                <td>: <input type="text" name="judul_materi" required></td>
             </tr>
             <tr>
-                <td>Catatan / Notes</td>
-                <td>: <textarea name="catatan" rows="5" cols="40" placeholder="Ketik materi penting di sini..." required></textarea></td>
+                <td>Isi Catatan / Notes</td>
+                <td>: <textarea name="catatan" rows="5" style="width: 100%; border-radius: 4px; padding: 8px;" required></textarea></td>
             </tr>
             <tr>
                 <td>Tanggal Kuliah</td>
@@ -69,16 +65,16 @@ if (isset($_POST['simpan_materi'])) {
             </tr>
             <tr>
                 <td></td>
-                <td><button type="submit" name="simpan_materi">Simpan Catatan</button></td>
+                <td><button type="submit" name="submit">Simpan Catatan</button></td>
             </tr>
         </table>
     </form>
 
     <hr>
 
-    <!-- TABEL UTAMA TAMPIL DATA (RUNTUT BERDASARKAN TANGGAL TERBARU) -->
-    <h3>Riwayat Materi & Catatan Kuliah:</h3>
-    <table border="1" cellpadding="10" cellspacing="0">
+    <!-- TABEL TAMPILAN CATATAN MATERI -->
+    <h3 style="text-align: center;">Riwayat Materi Kuliah runtut:</h3>
+    <table>
         <tr>
             <th>No</th>
             <th>Tanggal</th>
@@ -89,15 +85,9 @@ if (isset($_POST['simpan_materi'])) {
         </tr>
         <?php
         $no = 1;
-        // Menggunakan teknik JOIN untuk menggabungkan tabel_materi dan table_matkul 
-        // ORDER BY tanggal_kuliah DESC artinya data yang tanggalnya paling baru akan muncul di atas
-        $query_tampil = "SELECT tabel_materi.*, table_matkul.nama_matkul 
-                         FROM tabel_materi 
-                         JOIN table_matkul ON tabel_materi.id_matkul = table_matkul.id_matkul
-                         ORDER BY tabel_materi.tanggal_kuliah DESC";
-                         
-        $ambil_materi = mysqli_query($koneksi, $query_tampil);
-        
+        // Menggunakan SQL JOIN agar kita bisa memunculkan nama matkul, bukan sekadar angka ID
+        $ambil_materi = mysqli_query($koneksi, "SELECT tabel_materi.*, table_matkul.nama_matkul FROM tabel_materi JOIN table_matkul ON tabel_materi.id_matkul = table_matkul.id_matkul ORDER BY tabel_materi.tanggal_kuliah DESC");
+
         while ($tampil = mysqli_fetch_assoc($ambil_materi)) {
         ?>
         <tr>
